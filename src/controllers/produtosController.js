@@ -17,7 +17,41 @@ const buscarPorId = (req, res) => {
 };
 
 const criar = (req, res) => {
-  // TODO
+  const { nome, descricao, preco, categoria, estoque } = req.body;
+
+  if (!nome || nome.length < 3) {
+    return res.status(400).json({ erro: "O campo 'nome' é obrigatório e deve ter no mínimo 3 caracteres", campo: 'nome' });
+  }
+  if (!descricao || descricao.length < 10) {
+    return res.status(400).json({ erro: "O campo 'descricao' é obrigatório e deve ter no mínimo 10 caracteres", campo: 'descricao' });
+  }
+  if (preco === undefined || preco === null || typeof preco !== 'number' || preco <= 0) {
+    return res.status(400).json({ erro: "O campo 'preco' deve ser um número maior que zero", campo: 'preco' });
+  }
+  const categoriasValidas = ['equipamento', 'servico', 'acessorio'];
+  if (!categoria || !categoriasValidas.includes(categoria)) {
+    return res.status(400).json({ erro: "O campo 'categoria' deve ser: 'equipamento', 'servico' ou 'acessorio'", campo: 'categoria' });
+  }
+  if (estoque === undefined || estoque === null || typeof estoque !== 'number' || !Number.isInteger(estoque) || estoque < 0) {
+    return res.status(400).json({ erro: "O campo 'estoque' deve ser um inteiro maior ou igual a zero", campo: 'estoque' });
+  }
+
+  const agora = new Date().toISOString();
+
+  const novoProduto = {
+    id: nextId++,
+    nome,
+    descricao,
+    preco,
+    categoria,
+    estoque,
+    ativo: true,
+    criado_em: agora,
+    atualizado_em: agora,
+  };
+
+  produtos.push(novoProduto);
+  res.status(201).json(novoProduto);
 };
 
 const atualizar = (req, res) => {
